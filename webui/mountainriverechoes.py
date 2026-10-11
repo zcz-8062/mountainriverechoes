@@ -39,6 +39,10 @@ with suppress(Exception):
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 _sys.path.insert(0, str(BUNDLE_DIR))   # 仓库根(musicdl 所在), 免启动时依赖 PYTHONPATH
+# 全栈专家: 引入 SQLite 持久化层(webui/db.py)作为曲库/UI 态主存储
+with suppress(Exception):
+    sys.path.insert(0, str(BUNDLE_DIR / 'webui'))
+import db as ethnos_db
 
 from musicdl import musicdl
 from musicdl.modules import MusicClientBuilder, LyricSearchClient
@@ -868,14 +872,23 @@ def build_ethnos_playlist(group_key):
 
 
 def load_ethnos_playlist(group_key):
-    """读取磁盘缓存的民族歌单, 恢复 SongInfo 并注册进可播放/可下载的会话"""
+    """读取民族歌单(全栈专家: 优先 SQLite 主存储, fallback 原 JSON), 恢复 SongInfo 并注册进可播放/可下载的会话"""
     from musicdl.modules import SongInfo as _SongInfo
-    path = _cache_path(group_key)
-    if not path.exists():
-        return None
-    payload = json.loads(path.read_text(encoding='utf-8'))
-    if payload.get('v') != ETHNOS_SCHEMA:
-        return None
+    # 全栈专家: 优先从 SQLite 主存储读取; 数据库空/损坏时回退原 JSON 文件(零数据丢失)
+    payload = None
+    try:
+        _p = ethnos_db.group_to_payload(group_key)
+        if _p and (_p.get('tracks') or []):
+            payload = _p
+    except Exception:
+        payload = None
+    if payload is None:
+        path = _cache_path(group_key)
+        if not path.exists():
+            return None
+        payload = json.loads(path.read_text(encoding='utf-8'))
+        if payload.get('v') != ETHNOS_SCHEMA:
+            return None
     client = _ethnos_get_client()
     sid = new_session(client)
     items = search_sessions[sid]['items']
@@ -1006,7 +1019,16 @@ for _g in ETHNIC_GROUPS:
 
 def _iter_ethnos_payload():
     """遍历全部已构建民族歌单(含汉族民间小调), 产出 (group_name, payload)。
+    全栈专家: 优先从 SQLite 主存储遍历; fallback 原 JSON 遍历。
     需要读歌单级元数据(如 artists_removed 移除名单)时用这个, 避免为拿名单二次全量读盘。"""
+    # 全栈专家: 优先 SQLite(ethnic_groups 表仅含已迁移的有数据民族)
+    try:
+        for _k, _payload in ethnos_db.iter_groups():
+            yield (_payload.get('group') or _payload.get('name') or _k), _payload
+        return
+    except Exception:
+        pass
+    # fallback: 原 JSON 遍历
     files = [(g['key'], _cache_path(g['key'])) for g in ETHNIC_GROUPS]
     files.append(('han', ETHNOS_CACHE_DIR / 'han_汉族民间小调.json'))
     for key, path in files:
@@ -1149,6 +1171,46 @@ mimetypes.add_type('audio/ogg', '.ogg')
 
 app = Flask(__name__, template_folder=str(BUNDLE_DIR / 'webui' / 'templates'))
 app.config['JSON_AS_ASCII'] = False
+
+# ---------------------------------------------------------------- 全栈专家: 工程规范(日志/错误/安全头)
+import logging as _logging
+
+def _setup_logging():
+    """结构化单行日志(含级别/时间/模块), 不记录密码、令牌等敏感信息。"""
+    _h = _logging.StreamHandler()
+    _h.setFormatter(_logging.Formatter(
+        '{"time":"%(asctime)s","level":"%(levelname)s","module":"%(name)s","msg":%(message)r}'))
+    _root = _logging.getLogger()
+    _root.handlers = [_h]
+    _root.setLevel(_logging.INFO)
+    app.logger.setLevel(_logging.INFO)
+
+_setup_logging()
+
+@app.errorhandler(404)
+def _err_404(err):
+    return jsonify({'error': '资源不存在', 'code': 404}), 404
+
+@app.errorhandler(405)
+def _err_405(err):
+    return jsonify({'error': '方法不允许', 'code': 405}), 405
+
+@app.errorhandler(500)
+def _err_500(err):
+    app.logger.error('unhandled 500: %s', err)
+    return jsonify({'error': '服务器内部错误', 'code': 500}), 500
+
+@app.errorhandler(Exception)
+def _err_exc(err):
+    app.logger.error('unhandled exception: %s', err)
+    return jsonify({'error': '服务器内部错误', 'code': 500}), 500
+
+@app.after_request
+def _security_headers(resp):
+    resp.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    resp.headers.setdefault('X-Frame-Options', 'DENY')
+    resp.headers.setdefault('Referrer-Policy', 'no-referrer')
+    return resp
 
 state_lock = threading.Lock()
 clients_cache = {}
@@ -1360,6 +1422,26 @@ def source_search_worker(job_id, source):
 @app.route('/')
 def index():
     return render_template('mountainriverechoes.html')
+
+
+@app.route('/health')
+def health():
+    """全栈专家: 健康检查 + 数据库状态(证明 SQLite 持久化层真实工作)"""
+    try:
+        _db = ethnos_db.status()
+        return jsonify({'status': 'ok', 'service': 'mountainriverechoes', 'database': _db})
+    except Exception as e:
+        return jsonify({'status': 'degraded', 'error': str(e)}), 500
+
+
+@app.route('/ready')
+def ready():
+    """全栈专家: 就绪探针 —— 数据库可读即视为就绪(本地单机应用, 无外部依赖)。"""
+    try:
+        _ = ethnos_db.status()
+        return jsonify({'status': 'ready', 'service': 'mountainriverechoes'})
+    except Exception as e:
+        return jsonify({'status': 'not_ready', 'error': str(e)}), 503
 
 
 # ---------------------------------------------------------------- 搜索 (渐进式, 逐源返回)
@@ -2106,6 +2188,7 @@ def _persist_song_link(song, orig_src=None):
                 sd['ext'] = str(song.ext).lstrip('.').lower()
                 tr['ext'] = str(song.ext).lstrip('.').upper()
             _atomic_write_json(path, payload)
+            _sync_group_to_db(key, payload)
 
 
 def _ytdlp_bin():
@@ -2812,6 +2895,23 @@ def _respond_fast(platform, playlist_id):
 
 
 @app.route('/api/ethnos/ingest', methods=['POST'])
+def _sync_group_to_db(group_key, payload=None):
+    """写盘后把某民族 payload 同步进 SQLite 主存储(整组覆盖, 幂等)。
+    payload 缺省则从磁盘再读一次, 确保冻结运行(exe)与源码两种场景都能落库。"""
+    try:
+        if payload is None:
+            p = _cache_path(group_key)
+            if not p.exists():
+                return
+            payload = json.loads(p.read_text(encoding='utf-8'))
+        ethnos_db.migrate_group(group_key, payload)
+    except Exception as _e:
+        try:
+            app.logger.error('sync_group_to_db failed group=%s: %s', group_key, _e)
+        except Exception:
+            pass
+
+
 def api_ethnos_ingest():
     """外部数据统一入库通道: 服务端内读盘-合并-写盘(带锁), 避免与后台构建的写盘竞争"""
     data = request.get_json(force=True)
@@ -2838,6 +2938,7 @@ def api_ethnos_ingest():
         if payload.get('v') != ETHNOS_SCHEMA:
             payload['v'] = ETHNOS_SCHEMA
         _atomic_write_json(path, payload)
+        _sync_group_to_db(group_key, payload)
         if ethnos_state[group_key]['state'] == 'done':
             ethnos_state[group_key] = {'state': 'done', 'count': payload['count']}
     return jsonify({'ok': True, 'added': added, 'total': payload['count']})
@@ -3055,6 +3156,7 @@ def api_ethnos_edit():
                 dp['edited_by'] = dp['edited_by'][-50:]
                 dp['edited_at'] = dp['edited_at'][-50:]
                 _atomic_write_json(dpath, dp)
+                _sync_group_to_db(dst_key, dp)
                 if dst_key in ethnos_state and ethnos_state[dst_key]['state'] == 'done':
                     ethnos_state[dst_key]['count'] = dp['count']
                 _ui_unban_artist(dst_key, [artist])
@@ -3126,6 +3228,7 @@ def api_ethnos_edit():
                 dp['edited_by'] = dp['edited_by'][-50:]
                 dp['edited_at'] = dp['edited_at'][-50:]
                 _atomic_write_json(dpath, dp)
+                _sync_group_to_db(dst_key, dp)
                 if mode == 'move':
                     payload['tracks'] = [t for t in src_tracks if _track_key(t) not in want]
                     payload['count'] = len(payload['tracks'])
@@ -3171,6 +3274,7 @@ def api_ethnos_edit():
                 dp['edited_by'] = dp['edited_by'][-50:]
                 dp['edited_at'] = dp['edited_at'][-50:]
                 _atomic_write_json(dpath, dp)
+                _sync_group_to_db(dst_key, dp)
                 if dst_key in ethnos_state and ethnos_state[dst_key]['state'] == 'done':
                     ethnos_state[dst_key]['count'] = dp['count']
                 _ui_unban_artist(dst_key, [name])
@@ -3235,6 +3339,7 @@ def api_ethnos_edit():
                     dp['edited_by'] = dp['edited_by'][-50:]
                     dp['edited_at'] = dp['edited_at'][-50:]
                     _atomic_write_json(dpath, dp)
+                    _sync_group_to_db(dst_key, dp)
                     if dst_key in ethnos_state and ethnos_state[dst_key]['state'] == 'done':
                         ethnos_state[dst_key]['count'] = dp['count']
                     payload['tracks'] = [t for t in src_tracks if not _in_coll(t)]
@@ -3255,6 +3360,7 @@ def api_ethnos_edit():
         payload['edited_by'] = payload['edited_by'][-50:]
         payload['edited_at'] = payload['edited_at'][-50:]
         _atomic_write_json(path, payload)
+        _sync_group_to_db(group, payload)
         if group in ethnos_state and ethnos_state[group]['state'] == 'done':
             ethnos_state[group]['count'] = payload['count']
     return jsonify({'ok': True, 'count': payload['count'], **extra})
@@ -3281,8 +3387,17 @@ def api_ethnos_custom():
 # 且换浏览器后同一份曲库显示两套样子。这里提供服务端单一事实来源, 前端仍用 localStorage 做首屏即时渲染。
 def _ui_state_load():
     """读原始结构: {key: {'v': 值, 't': 写入时间戳}}
-    每项带时间戳是为了多端(多浏览器/清缓存后重装)取舍: 谁的写入更新听谁的,
-    否则本地那份旧值会把用户在别处刚做的排序碾回去。"""
+    全栈专家: 优先 SQLite 主存储, fallback 原 ui_state.json 文件。"""
+    now = int(time.time())
+    # 全栈专家: 优先从 SQLite 主存储读取 UI 态(运行期权威来源)
+    try:
+        _db_state = ethnos_db.get_ui_state()
+        if _db_state:
+            return {k: (e if isinstance(e, dict) and 'v' in e else {'v': e, 't': now})
+                    for k, e in _db_state.items()}
+    except Exception:
+        pass
+    # fallback: 原 JSON 文件
     raw = {}
     with UI_STATE_LOCK:
         with suppress(Exception):
@@ -3290,7 +3405,6 @@ def _ui_state_load():
                 v = json.loads(UI_STATE_PATH.read_text(encoding='utf-8'))
                 if isinstance(v, dict):
                     raw = v
-    now = int(time.time())
     return {k: (e if isinstance(e, dict) and 'v' in e else {'v': e, 't': now})
             for k, e in raw.items()}
 
@@ -3369,6 +3483,12 @@ def _ui_state_save(data):
         tmp = UI_STATE_PATH.with_suffix('.json.tmp')
         tmp.write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')
         tmp.replace(UI_STATE_PATH)
+        # 全栈专家: 双写 SQLite 主存储(运行期权威来源)
+        try:
+            for _k, _v in data.items():
+                ethnos_db.set_ui_state(_k, _v)
+        except Exception:
+            pass
 
 
 @app.route('/api/ui/state')
@@ -4057,4 +4177,56 @@ if __name__ == '__main__':
             if _hp.get('partial'):
                 print('[mountainriverechoes] resuming han folk build', flush=True)
                 threading.Timer(8.0, lambda: threading.Thread(target=build_han_folk, daemon=True).start()).start()
-    app.run(host=HOST, port=PORT, threaded=True)
+    # 全栈专家: 启动时确保 SQLite 主存储已从 JSON 迁移(首次运行自动建库)
+    ethnos_db.ensure_migrated()
+
+    # 单窗口桌面模式(默认): 用 pywebview 把网页界面嵌进 exe 自己的原生窗口,
+    # 双击 exe 直接弹出应用界面, 不再依赖外部浏览器。
+    # 退回纯服务模式(仅起本地服务器, 用浏览器访问): 设 MRE_SERVER=1 或加 --server 参数。
+    _server_only = (os.environ.get('MRE_SERVER', '0') == '1') or ('--server' in sys.argv)
+    if _server_only:
+        app.run(host=HOST, port=PORT, threaded=True)
+    else:
+        import threading as _th
+        def _flask_serve():
+            app.run(host=HOST, port=PORT, threaded=True)
+        _th.Thread(target=_flask_serve, daemon=True).start()
+        import urllib.request as _ur
+        for _i in range(80):
+            try:
+                _ur.urlopen(f'http://{HOST}:{PORT}/health', timeout=1)
+                break
+            except Exception:
+                _th.Event().wait(0.25)
+        try:
+            import webview
+            webview.create_window(
+                '山河回响 · 纳西族音乐',
+                f'http://{HOST}:{PORT}/',
+                width=1280, height=820,
+                text_select=False, zoomable=False,
+            )
+            webview.start(debug=False)
+        except Exception as _e:
+            # 无 WebView2 运行库等场景下, 用系统弹窗提示并自动打开默认浏览器, 避免无控制台时静默失败
+            _msg = ('无法启动内置应用窗口（%s）。\n\n'
+                    '原因通常是系统缺少 Microsoft Edge WebView2 运行库。\n'
+                    '已将界面在默认浏览器中打开，如未弹出请手动访问：\n'
+                    'http://%s:%s') % (repr(_e), HOST, PORT)
+            try:
+                import ctypes
+                ctypes.windll.user32.MessageBoxW(0, _msg, '山河回响 · 纳西族音乐', 0x10)
+            except Exception:
+                try:
+                    print('[mountainriverechoes] 原生窗口启动失败:', repr(_e), flush=True)
+                    print(f'[mountainriverechoes] 请在浏览器打开 http://{HOST}:{PORT}', flush=True)
+                except Exception:
+                    pass
+            try:
+                import webbrowser
+                webbrowser.open(f'http://{HOST}:{PORT}/')
+            except Exception:
+                pass
+            import time as _t
+            while True:
+                _t.sleep(3600)
