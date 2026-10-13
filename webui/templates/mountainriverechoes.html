@@ -613,6 +613,140 @@ tr:hover .td-act{opacity:1}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
 @media (max-width:1120px){ #np-body{gap:36px} }
 </style>
+<style id="theme-baishuitai">
+/* ================================================================
+   主题: 白水台 (Baishuitai) —— 香格里拉三坝乡白地村「仙人遗田」
+   纳西族东巴文化圣地 · 碳酸钙梯台 · 一池池碧水
+   配色: 石灰华白 / 池水青碧 / 深潭墨绿 / 东巴朱砂
+   ================================================================ */
+:root{
+  --red:#2E8F86; --red-deep:#1B615A; --red-grad:linear-gradient(135deg,#4FB6A9,#1E7269);
+  --bg:#E7E1D3; --side:#F8F5ED; --side-hover:#F0EBDE; --side-active:#FFFDF7;
+  --txt:#233130; --txt2:#5B6B67; --txt3:#94A29D; --line:#E6E0D0;
+  --row-alt:transparent; --row-hover:#F1F6F1;
+  --gold-grad:linear-gradient(135deg,#E6D296,#C9A94E);
+  --hq-grad:linear-gradient(135deg,#5CC3B6,#1E7269);
+  --sh-1:0 1px 2px rgba(19,58,54,.07);
+  --sh-2:0 2px 8px rgba(19,58,54,.09);
+  --sh-3:0 8px 24px rgba(19,58,54,.12);
+  --sh-4:0 16px 44px rgba(19,58,54,.18);
+  --focus:0 0 0 3px rgba(46,143,134,.22);
+  /* 白水台专用色板 */
+  --bst-white:#FAF7EF;      /* 石灰华白 */
+  --bst-white-2:#F2EDDF;    /* 台阶背光 */
+  --bst-rim:#E2D9C4;        /* 钙化台沿 */
+  --bst-pool:#2E8F86;       /* 池水青碧 */
+  --bst-pool-lt:#7FCFC4;    /* 浅滩 */
+  --bst-deep:#164F49;       /* 深潭 */
+  --bst-cinnabar:#B4553C;   /* 东巴朱砂 */
+}
+body{background:var(--bg)}
+/* 侧栏: 像一级级石灰华台阶, 从上到下由亮转暖 */
+#sidebar{background:linear-gradient(180deg,#FBF9F3 0%,#F6F2E7 60%,#F1ECDD 100%);border-right:1px solid var(--bst-rim)}
+.nav-title{color:#A6AA9B}
+.logo-icon{background:linear-gradient(135deg,#5CC3B6,#1E7269);box-shadow:0 3px 10px rgba(22,79,73,.32)}
+.side-foot{border-top:1px solid var(--bst-rim)}
+/* 顶栏 */
+#topbar{background:linear-gradient(180deg,#FCFAF4,#F6F1E6);border-bottom:1px solid var(--bst-rim)}
+#searchbox .box{background:#F3F1E7;border-color:transparent}
+#searchbox .box:focus-within{background:#fff;border-color:#DCD6C4;box-shadow:0 2px 10px rgba(22,79,73,.10)}
+.round-btn{background:#EFEBDE}
+.round-btn:hover:not(:disabled){background:#E4DFCF}
+/* 内容区: 极淡的池水汽 + 象牙白 */
+#main{background:var(--bst-white)}
+#content{background:
+  radial-gradient(90% 38% at 100% 0, rgba(46,143,134,.055), transparent 62%),
+  linear-gradient(180deg,#FDFCF7 0%,#FBF8F0 100%)}
+/* ---- 梯田弧形: 白水台 banner ---- */
+.hero,.ethnos-hero{border-radius:20px;box-shadow:0 12px 32px rgba(22,79,73,.24)}
+.hero{
+  background:
+    radial-gradient(130% 62% at 48% 124%, rgba(255,255,255,.50) 0 20%, rgba(255,255,255,0) 21%),
+    radial-gradient(100% 48% at 24% 120%, rgba(255,255,255,.32) 0 24%, rgba(255,255,255,0) 25%),
+    radial-gradient(150% 76% at 88% 128%, rgba(216,244,239,.40) 0 18%, rgba(0,0,0,0) 19%),
+    linear-gradient(168deg,#BCEAE0 0%,#79C7BB 28%,#2E8F86 62%,#164F49 100%);
+}
+.hero::after{background:radial-gradient(circle,rgba(255,255,255,.22),transparent 62%)}
+.hero h2{text-shadow:0 2px 12px rgba(10,50,46,.30)}
+.ethnos-hero{
+  background:
+    radial-gradient(124% 66% at 44% 126%, rgba(255,255,255,.42) 0 19%, rgba(255,255,255,0) 20%),
+    radial-gradient(88% 44% at 84% 122%, rgba(255,255,255,.24) 0 22%, rgba(255,255,255,0) 23%),
+    linear-gradient(112deg,#164F49 0%,#2E8F86 40%,#5FAD9F 66%,#B4553C 100%);
+}
+.ethnos-hero::after{background:radial-gradient(circle,rgba(255,236,214,.22),transparent 62%)}
+.ethnos-btn{background:rgba(255,255,255,.94);color:#164F49}
+.ethnos-btn:hover{background:#fff}
+/* 白水台题注 */
+.bst-cap{display:inline-flex;align-items:center;gap:6px;margin-top:11px;
+  font-size:11px;letter-spacing:1.2px;color:rgba(255,255,255,.94);
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.36);
+  border-radius:12px;padding:3px 12px;backdrop-filter:blur(2px)}
+/* 构建进度条: 台沿金 → 池水青 */
+.ethnos-progress{background:#FBF6E9;border:1px solid #EFE3C4}
+.ethnos-bar{background:#EFE3C4}
+.ethnos-fill{background:linear-gradient(90deg,#7FCFC4,#2E8F86)}
+.eth-removedbar{background:#FBF6E9;border-color:#EFE3C4}
+/* 表格 / 卡片 */
+.song-table td{border-bottom:1px solid #F0F2EA}
+.song-table tr:nth-child(even) td{background:transparent}
+.song-table tr.playing td,.batch-mode tbody tr.on{background:#E9F5F2}
+.td-name .t.now{color:var(--red)}
+.chart-card{background:#FFFDF8;border-color:var(--bst-rim)}
+.chart-card:hover{border-color:#C9DCD5}
+.chart-item{border-bottom:1px solid #F0F2EA}
+.chip{background:#F3F1E7}
+.chip:hover{background:#EAE5D6}
+.chip.on{background:#E6F4F1;border-color:#A9DBD3}
+.td-act button:hover{background:#E6F4F1}
+.eth-row:hover,.eth-artist:hover,.dw-row:hover,.ms-row:hover,#as-list .p:hover,#search-hist .h-row:hover{background:#F2F5EE}
+.eth-row.on{background:#E9F5F2}
+.eth-row.is-pinned,.pltable tr.is-pinned td{background:#FDF8EC}
+.filter-input{background:#F3F1E7;color:var(--txt)}
+.src-checks label{background:#F4F2E8}
+.src-checks label.on{background:#E9F5F2;border-color:#A9DBD3}
+.src-pill{background:#F4F2E8}
+.as-newrow{background:#FBF9F2;border-color:#DCD6C4}
+/* 头像 / 封面底色: 青碧系 */
+.eth-artist .av,.eth-row .av{background:linear-gradient(135deg,#A6D8D0,#3E8B82)}
+.art-card .av{background:linear-gradient(135deg,#AFDFD6,#2E8F86);box-shadow:0 6px 18px rgba(46,143,134,.28)}
+.alb-card .cov{background:linear-gradient(135deg,#A2D2CB,#5FA79C)}
+/* ---- 播放页: 整片梯田 ---- */
+#nowplaying{
+  background:
+    radial-gradient(124% 60% at 50% 118%, rgba(46,143,134,.17) 0 21%, rgba(0,0,0,0) 22%),
+    radial-gradient(92% 46% at 18% 114%, rgba(46,143,134,.12) 0 25%, rgba(0,0,0,0) 26%),
+    linear-gradient(168deg,#F4FAF8 0%,#E9F4F0 42%,#F7F3E7 100%);
+}
+.lrc-line.on{color:#164F49}
+.np-btn{background:rgba(22,79,73,.07)}
+.np-btn:hover{background:rgba(22,79,73,.14)}
+/* ---- 底部播放条: 台沿 + 一汪池水 ---- */
+#playerbar{background:linear-gradient(180deg,#FCFAF4 0%,#F5F1E6 100%);border-top:1px solid var(--bst-rim)}
+.bar{background:#E5E1D2}
+.bar .fill{background:linear-gradient(90deg,#7FCFC4,#2E8F86);box-shadow:0 0 8px rgba(46,143,134,.45)}
+.bar .dot{background:#2E8F86;box-shadow:0 2px 6px rgba(22,79,73,.45)}
+.pb-btn{color:#51615D}
+.pb-prog .time{color:#8E9B96}
+#pb-cover{box-shadow:0 3px 10px rgba(22,79,73,.22);background:#EDE9DC}
+#pb-cover .ph{background:#EDE9DC;color:#9AA39C}
+/* FM 唱片: 青碧水纹 */
+.fm-disc{background:conic-gradient(from 30deg,#164F49,#2E8F86,#7FCFC4,#2E8F86,#164F49);box-shadow:0 16px 50px rgba(22,79,73,.32)}
+.fm-disc .inner{color:#2E8F86}
+/* 弹窗 / toast */
+.overlay{background:rgba(18,42,40,.42)}
+.dlg{background:linear-gradient(180deg,#FFFDF8,#FBF8F0)}
+.dlg-close:hover{background:#F1EEE2}
+#vol-pop{background:#FFFDF8}
+.toast{background:rgba(20,52,49,.90)}
+#kbd-help .kh-card{background:linear-gradient(180deg,#FFFDF8,#FBF8F0)}
+#kbd-help kbd{background:#F4F2E8;border-color:#E2DDCB}
+/* 滚动条 / 骨架屏 */
+::-webkit-scrollbar-thumb{background:#D6D2C1;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#BEB9A4;background-clip:content-box}
+.sk{background:linear-gradient(90deg,#F3F1E7 25%,#E8E5D8 37%,#F3F1E7 63%);background-size:400% 100%}
+.empty svg{color:#2E8F86;opacity:.30}
+</style>
 </head>
 <body>
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
@@ -731,6 +865,7 @@ tr:hover .td-act{opacity:1}
           <div>
             <h2>纳西族 · 音乐地图</h2>
             <p>遍历多音源聚合搜索，为纳西族构建民族音乐歌单（民歌 / 特色曲种 / 民族语言歌曲）</p>
+            <span class="bst-cap">白水台 · 仙人遗田 · 纳西东巴圣地</span>
           </div>
           <div class="ethnos-hero-acts">
             <button class="btn ethnos-btn" id="ethnos-stop" style="display:none">停止构建</button>
