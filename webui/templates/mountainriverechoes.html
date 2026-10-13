@@ -1431,7 +1431,8 @@ function render(page, params){
   currentPage = page;
   $$('.page').forEach(p => p.classList.remove('active'));
   const el = $('#page-' + page); if (el) el.classList.add('active');
-  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page
+    || (page === 'playlist' && params.platform === 'ethnos' && n.dataset.page === 'ethnos')));
   $('#content').scrollTop = 0;
   closeNowPlaying(false);
   if (page === 'discover') initDiscover();
@@ -1441,7 +1442,7 @@ function render(page, params){
   if (page === 'local') loadLocal();
   if (page === 'favorites') renderFavorites();
   if (page === 'fm') renderFM();
-  if (page === 'ethnos') { loadEthnos(); }
+  if (page === 'ethnos') { openEthnosZone(); }
   if (page === 'index') { loadIndex(); loadEthnos(); }
   if (page === 'history') renderHistory();
 }
@@ -2484,6 +2485,18 @@ function renderEthnos(){
     nav('playlist', { id: k, platform: 'ethnos', name: card.dataset.nm + ' · 民族音乐' });
   });
   $$('.eth-card[data-more]').forEach(card => card.onclick = () => nav('ethnos'));
+}
+/* 纳西族专属版: 取消「民族卡片」这一层 —— 点侧栏「民族音乐歌单」直接落到纳西族曲库,
+   不再先渲染一张卡片让用户再点一次。只有唯一一个已构建歌单时直跳; 否则回落到卡片页。 */
+async function openEthnosZone(){
+  const jump = g => nav('playlist', { id: g.key, platform: 'ethnos', name: g.name + ' · 民族音乐' }, false);
+  const cached = (state.ethnos.groups || []).filter(g => g.state === 'done');
+  if (cached.length === 1 && !state.ethnos.building) { jump(cached[0]); return; }   /* 已加载过: 同步直跳, 零闪烁 */
+  await loadEthnos();
+  const groups = state.ethnos.groups || [];
+  const done = groups.filter(g => g.state === 'done');
+  const busy = state.ethnos.building || groups.some(g => g.state === 'building');
+  if (done.length === 1 && !busy) jump(done[0]);
 }
 $('#ethnos-stop').onclick = async () => {
   try { await api('/api/ethnos/build', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'stop' }) }); toast('已请求停止，完成当前民族后停止'); } catch(err){}
