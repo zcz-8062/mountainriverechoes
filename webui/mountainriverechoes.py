@@ -1169,7 +1169,9 @@ mimetypes.add_type('audio/flac', '.flac')
 mimetypes.add_type('audio/mp4', '.m4a')
 mimetypes.add_type('audio/ogg', '.ogg')
 
-app = Flask(__name__, template_folder=str(BUNDLE_DIR / 'webui' / 'templates'))
+app = Flask(__name__,
+            template_folder=str(BUNDLE_DIR / 'webui' / 'templates'),
+            static_folder=str(BUNDLE_DIR / 'webui' / 'static'))   # 静态资源(UI 背景图)显式定位: 冻结时 __name__ 推断的根路径指向 _MEIPASS 根, 会 /static 404
 app.config['JSON_AS_ASCII'] = False
 
 # ---------------------------------------------------------------- 全栈专家: 工程规范(日志/错误/安全头)
@@ -3624,7 +3626,15 @@ INDEX_SNAPSHOT_PATH = ETHNOS_CACHE_DIR / 'index_snapshot.json'
 
 
 def _ethnos_files_sig():
-    """56 个歌单文件的轻量签名(文件名+mtime+大小), stat 一次毫秒级, 作为索引缓存失效依据"""
+    """歌单文件的轻量签名(文件名+mtime+大小), stat 一次毫秒级, 作为索引缓存失效依据
+
+    全栈专家 2026-10-16 修正(界面 587 vs 曲库 837 事故):
+    原先签名只看文件 mtime/size。当外部脚本/工具**直接改 SQLite**(而非改 JSON 文件)时,
+    JSON 文件的 mtime/size 完全没变 -> sig 不变 -> /api/index 一直命中旧快照里写死的 songs=587,
+    而此时 /health 已是 837, 于是出现"后端 837、界面 587"的撕裂。
+    现把 **SQLite 实际曲目总数**(读不到则退回 JSON count)纳入签名:
+    任何一边的数据变动都会让 sig 变化, 快照自动失效并后台重算。
+    """
     sig = []
     for key in [g['key'] for g in ETHNIC_GROUPS] + ['han']:
         p = _cache_path(key)
@@ -3637,6 +3647,17 @@ def _ethnos_files_sig():
         with suppress(OSError):
             stt = p.stat()
             sig.append([p.name, stt.st_mtime_ns, stt.st_size])
+    # ---- 数据侧签名: 让"改了数据库但没动文件"也能失效旧快照 ----
+    with suppress(Exception):
+        sig.append(['__db_tracks__', ethnos_db.status()['tracks']])
+    with suppress(Exception):
+        if '__db_tracks__' not in [s[0] for s in sig if isinstance(s, list)]:
+            _tt = 0
+            for key in [g['key'] for g in ETHNIC_GROUPS]:
+                _pp = _cache_path(key)
+                with suppress(Exception):
+                    _tt += json.loads(_pp.read_text(encoding='utf-8')).get('count', 0)
+            sig.append(['__db_tracks__', _tt])
     return sig
 
 
@@ -3782,6 +3803,20 @@ def api_index():
     with suppress(Exception):
         if INDEX_SNAPSHOT_PATH.exists():
             snap = json.loads(INDEX_SNAPSHOT_PATH.read_text(encoding='utf-8'))
+    if snap and snap.get('data'):
+        # 全栈专家 2026-10-16: 过期快照的一致性校验。
+        # 若快照里的 songs 与 SQLite 当前实际曲目数对不上(数据被外部工具直接改写),
+        # 就作废它并同步重算 —— 不再"先给旧数据", 否则会出现"后台 837、界面 587"的撕裂。
+        with suppress(Exception):
+            _keys = [g['key'] for g in ETHNIC_GROUPS]
+            want = sum(ethnos_db.count_tracks(k) for k in _keys)
+            with suppress(Exception):
+                _hc = ethnos_db.count_tracks('han')
+                if _hc:
+                    want += _hc
+            got = (snap['data'].get('stats') or {}).get('songs')
+            if isinstance(want, int) and isinstance(got, int) and want != got:
+                snap = None
     if snap and snap.get('sig') == sig:
         INDEX_CACHE.update(sig=sig, data=snap['data'])
         return jsonify(snap['data'])
@@ -4201,7 +4236,7 @@ if __name__ == '__main__':
         try:
             import webview
             webview.create_window(
-                '山河回响 · 纳西族音乐',
+                '纳西音韵 · 纳西族音乐',
                 f'http://{HOST}:{PORT}/',
                 width=1280, height=820,
                 text_select=False, zoomable=False,
@@ -4215,7 +4250,7 @@ if __name__ == '__main__':
                     'http://%s:%s') % (repr(_e), HOST, PORT)
             try:
                 import ctypes
-                ctypes.windll.user32.MessageBoxW(0, _msg, '山河回响 · 纳西族音乐', 0x10)
+                ctypes.windll.user32.MessageBoxW(0, _msg, '纳西音韵 · 纳西族音乐', 0x10)
             except Exception:
                 try:
                     print('[mountainriverechoes] 原生窗口启动失败:', repr(_e), flush=True)

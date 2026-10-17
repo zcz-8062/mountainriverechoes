@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>山河回响 · 纳西族音乐</title>
+<title>纳西音韵 · 纳西族音乐</title>
 <style>
 /* ================= 基础 ================= */
 :root{
@@ -615,137 +615,195 @@ tr:hover .td-act{opacity:1}
 </style>
 <style id="theme-baishuitai">
 /* ================================================================
-   主题: 白水台 (Baishuitai) —— 香格里拉三坝乡白地村「仙人遗田」
-   纳西族东巴文化圣地 · 碳酸钙梯台 · 一池池碧水
-   配色: 石灰华白 / 池水青碧 / 深潭墨绿 / 东巴朱砂
+   皮肤: 纳西音韵 · 实景玻璃版 (Scene Glass)  —  复刻「纳西音乐」实景 UI
+   全屏丽江实景背景 + 毛玻璃浮层大卡片 + 白字侧栏 + 纳西红/金沙点缀
+   主色: 纳西红 #E8442E / 朱砂 #C4291F
+   辅助: 暖橙 #FF8A1E / 东巴金 #F6B31E / 暖黄 #FFD25E
+   背景: 丽江实景照(雪山·古城·花海) 全屏铺底
+   装饰: 东巴印章(naxi_seal.svg) + 纳西水纹星点(naxi_pattern.svg)
    ================================================================ */
 :root{
-  --red:#2E8F86; --red-deep:#1B615A; --red-grad:linear-gradient(135deg,#4FB6A9,#1E7269);
-  --bg:#E7E1D3; --side:#F8F5ED; --side-hover:#F0EBDE; --side-active:#FFFDF7;
-  --txt:#233130; --txt2:#5B6B67; --txt3:#94A29D; --line:#E6E0D0;
-  --row-alt:transparent; --row-hover:#F1F6F1;
-  --gold-grad:linear-gradient(135deg,#E6D296,#C9A94E);
-  --hq-grad:linear-gradient(135deg,#5CC3B6,#1E7269);
-  --sh-1:0 1px 2px rgba(19,58,54,.07);
-  --sh-2:0 2px 8px rgba(19,58,54,.09);
-  --sh-3:0 8px 24px rgba(19,58,54,.12);
-  --sh-4:0 16px 44px rgba(19,58,54,.18);
-  --focus:0 0 0 3px rgba(46,143,134,.22);
-  /* 白水台专用色板 */
-  --bst-white:#FAF7EF;      /* 石灰华白 */
-  --bst-white-2:#F2EDDF;    /* 台阶背光 */
-  --bst-rim:#E2D9C4;        /* 钙化台沿 */
-  --bst-pool:#2E8F86;       /* 池水青碧 */
-  --bst-pool-lt:#7FCFC4;    /* 浅滩 */
-  --bst-deep:#164F49;       /* 深潭 */
-  --bst-cinnabar:#B4553C;   /* 东巴朱砂 */
+  --red:#E8442E; --red-deep:#C4291F; --red-grad:linear-gradient(135deg,#FF8A1E,#E8442E);
+  --bg:#FFF7EC;
+  --side:#FFF7EC; --side-hover:#FCEBD8; --side-active:#F6D9C2;
+  --txt:#3A2418; --txt2:#7A5238; --txt3:#B08968; --line:#F0D9C4;
+  --row-alt:transparent; --row-hover:#FCEBD8;
+  --gold-grad:linear-gradient(135deg,#FFD25E,#F6B31E);
+  --hq-grad:linear-gradient(135deg,#FFD25E,#E8442E);
+  --sh-1:0 1px 2px rgba(120,50,20,.06);
+  --sh-2:0 2px 8px rgba(120,50,20,.10);
+  --sh-3:0 8px 24px rgba(120,50,20,.14);
+  --sh-4:0 16px 44px rgba(120,50,20,.18);
+  --focus:0 0 0 3px rgba(232,68,46,.28);
+  /* 纳西暖色板 */
+  --naxi-red:#E8442E; --naxi-deep:#C4291F; --naxi-orange:#FF8A1E; --naxi-gold:#F6B31E; --naxi-yellow:#FFD25E;
+  --naxi-cream:#FFF7EC; --naxi-tan:#FCEBD8; --naxi-line:#F0D9C4; --naxi-brown:#7A5238;
+  --bg-photo:url('/static/bg_lijiang.jpg');
+  --bg-top:url('/static/bg_lijiang_top.jpg');
+  --seal:url('/static/naxi_seal.svg');
+  --pattern:url('/static/naxi_pattern.svg');
 }
-body{background:var(--bg)}
-/* 侧栏: 像一级级石灰华台阶, 从上到下由亮转暖 */
-#sidebar{background:linear-gradient(180deg,#FBF9F3 0%,#F6F2E7 60%,#F1ECDD 100%);border-right:1px solid var(--bst-rim)}
-.nav-title{color:#A6AA9B}
-.logo-icon{background:linear-gradient(135deg,#5CC3B6,#1E7269);box-shadow:0 3px 10px rgba(22,79,73,.32)}
-.side-foot{border-top:1px solid var(--bst-rim)}
-/* 顶栏 */
-#topbar{background:linear-gradient(180deg,#FCFAF4,#F6F1E6);border-bottom:1px solid var(--bst-rim)}
-#searchbox .box{background:#F3F1E7;border-color:transparent}
-#searchbox .box:focus-within{background:#fff;border-color:#DCD6C4;box-shadow:0 2px 10px rgba(22,79,73,.10)}
-.round-btn{background:#EFEBDE}
-.round-btn:hover:not(:disabled){background:#E4DFCF}
-/* 内容区: 极淡的池水汽 + 象牙白 */
-#main{background:var(--bst-white)}
-#content{background:
-  radial-gradient(90% 38% at 100% 0, rgba(46,143,134,.055), transparent 62%),
-  linear-gradient(180deg,#FDFCF7 0%,#FBF8F0 100%)}
-/* ---- 梯田弧形: 白水台 banner ---- */
-.hero,.ethnos-hero{border-radius:20px;box-shadow:0 12px 32px rgba(22,79,73,.24)}
+/* 隐藏运用较少的板块(保留 DOM 防 JS 绑定报错) */
+.ui-hidden{display:none !important}
+
+/* ---- 全屏丽江实景背景(铺在 #app 上, 侧栏透明浮于其上) ---- */
+body{background:#20140c;color:var(--txt)}
+#app{
+  border-radius:16px;
+  background:
+    linear-gradient(180deg, rgba(28,18,10,.34) 0%, rgba(28,18,10,.30) 42%, rgba(28,18,10,.46) 100%),
+    var(--bg-photo) center/cover no-repeat;
+  box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+/* ---- 侧栏: 透明玻璃 + 白字(复刻图上的白字导航) ---- */
+#sidebar{
+  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+  backdrop-filter:blur(14px) saturate(120%);
+  -webkit-backdrop-filter:blur(14px) saturate(120%);
+  border-right:1px solid rgba(255,255,255,.18);
+}
+.logo b,.logo small{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.logo small{color:rgba(255,255,255,.78)}
+.logo-icon{background:linear-gradient(135deg,#FF8A1E,#E8442E);box-shadow:0 3px 10px rgba(196,41,31,.4)}
+.nav-title{color:rgba(255,255,255,.62);font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.nav-item{color:rgba(255,255,255,.92);text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.nav-item:hover{background:rgba(255,255,255,.12);color:#fff}
+/* 侧栏选中: 纳西红橙渐变块 + 白字(民族视觉重心) */
+.nav-item.active{background:linear-gradient(135deg,#FF8A1E,#E8442E);color:#fff;box-shadow:0 4px 14px rgba(196,41,31,.4);font-weight:700;text-shadow:none}
+.nav-item.active .ic{color:#fff}
+.nav-item.active .grow{color:#fff !important}
+.nav-item.active .badge{background:rgba(255,255,255,.28);color:#fff}
+.side-foot{border-top:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.78)}
+.side-foot button{color:rgba(255,255,255,.85);text-shadow:0 1px 4px rgba(0,0,0,.35)}
+/* ---- 顶栏: 透明, 搜索框为白玻璃药丸 ---- */
+#topbar{background:transparent;border-bottom:1px solid rgba(255,255,255,.14)}
+#searchbox .box{background:rgba(255,250,242,.85);border-color:transparent;border-radius:999px;backdrop-filter:blur(10px)}
+#searchbox .box:focus-within{background:#fff;border-color:#E8442E;box-shadow:0 2px 12px rgba(232,68,46,.4)}
+#searchbox .box input,.search-input{color:#3A2418}
+#searchbox .ic{color:#7A5238}
+.round-btn{background:rgba(255,250,242,.82);color:#7A5238;backdrop-filter:blur(10px)}
+.round-btn:hover:not(:disabled){background:#fff;color:#C4291F}
+
+/* ---- 主区: 透明; 内容收进一张毛玻璃浮层大卡片(复刻图的白色面板) ---- */
+#main{background:transparent}
+#content{
+  margin:0 16px 16px;
+  border-radius:20px;
+  background:rgba(255,250,242,.86);
+  backdrop-filter:blur(24px) saturate(125%);
+  -webkit-backdrop-filter:blur(24px) saturate(125%);
+  box-shadow:0 18px 54px rgba(20,10,5,.42);
+  border:1px solid rgba(255,255,255,.5);
+}
+
+/* ---- 顶部 banner: 纳西暖色头图(红→橙→金) + 东巴印章 ---- */
+.hero,.ethnos-hero{border-radius:16px;box-shadow:0 12px 30px rgba(20,10,5,.24);overflow:hidden;position:relative}
 .hero{
   background:
-    radial-gradient(130% 62% at 48% 124%, rgba(255,255,255,.50) 0 20%, rgba(255,255,255,0) 21%),
-    radial-gradient(100% 48% at 24% 120%, rgba(255,255,255,.32) 0 24%, rgba(255,255,255,0) 25%),
-    radial-gradient(150% 76% at 88% 128%, rgba(216,244,239,.40) 0 18%, rgba(0,0,0,0) 19%),
-    linear-gradient(168deg,#BCEAE0 0%,#79C7BB 28%,#2E8F86 62%,#164F49 100%);
+    radial-gradient(130% 62% at 48% 124%, rgba(255,255,255,.30) 0 20%, rgba(255,255,255,0) 21%),
+    linear-gradient(168deg,rgba(196,41,31,.58) 0%,rgba(232,68,46,.50) 32%,rgba(255,138,30,.56) 68%,rgba(246,179,30,.62) 100%),
+    var(--bg-top) center/cover no-repeat;
 }
-.hero::after{background:radial-gradient(circle,rgba(255,255,255,.22),transparent 62%)}
-.hero h2{text-shadow:0 2px 12px rgba(10,50,46,.30)}
+.hero::after{background:radial-gradient(circle,rgba(255,250,235,.20),transparent 62%)}
+.hero h2{color:#fff;text-shadow:0 2px 14px rgba(120,30,10,.55)}
+.hero p{color:rgba(255,255,255,.92)}
 .ethnos-hero{
   background:
-    radial-gradient(124% 66% at 44% 126%, rgba(255,255,255,.42) 0 19%, rgba(255,255,255,0) 20%),
-    radial-gradient(88% 44% at 84% 122%, rgba(255,255,255,.24) 0 22%, rgba(255,255,255,0) 23%),
-    linear-gradient(112deg,#164F49 0%,#2E8F86 40%,#5FAD9F 66%,#B4553C 100%);
+    radial-gradient(124% 66% at 44% 126%, rgba(255,255,255,.30) 0 19%, rgba(255,255,255,0) 20%),
+    linear-gradient(112deg,rgba(196,41,31,.72) 0%,rgba(232,68,46,.60) 30%,rgba(255,138,30,.62) 66%,rgba(246,179,30,.70) 100%),
+    var(--bg-top) center/cover no-repeat;
 }
-.ethnos-hero::after{background:radial-gradient(circle,rgba(255,236,214,.22),transparent 62%)}
-.ethnos-btn{background:rgba(255,255,255,.94);color:#164F49}
-.ethnos-btn:hover{background:#fff}
-/* 白水台题注 */
+/* 东巴意象印章: 太阳·玉龙雪山·水波·七星(披星戴月) */
+.ethnos-hero::after{content:"";position:absolute;right:18px;top:14px;width:130px;height:130px;
+  background:var(--seal) center/contain no-repeat;opacity:.92;pointer-events:none;filter:drop-shadow(0 4px 10px rgba(120,30,10,.3))}
+.ethnos-hero h2{color:#fff;text-shadow:0 2px 14px rgba(120,30,10,.55)}
+.ethnos-hero p{color:rgba(255,255,255,.92)}
 .bst-cap{display:inline-flex;align-items:center;gap:6px;margin-top:11px;
-  font-size:11px;letter-spacing:1.2px;color:rgba(255,255,255,.94);
-  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.36);
+  font-size:11px;letter-spacing:1.2px;color:#fff;
+  background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);
   border-radius:12px;padding:3px 12px;backdrop-filter:blur(2px)}
-/* 构建进度条: 台沿金 → 池水青 */
-.ethnos-progress{background:#FBF6E9;border:1px solid #EFE3C4}
-.ethnos-bar{background:#EFE3C4}
-.ethnos-fill{background:linear-gradient(90deg,#7FCFC4,#2E8F86)}
-.eth-removedbar{background:#FBF6E9;border-color:#EFE3C4}
-/* 表格 / 卡片 */
-.song-table td{border-bottom:1px solid #F0F2EA}
-.song-table tr:nth-child(even) td{background:transparent}
-.song-table tr.playing td,.batch-mode tbody tr.on{background:#E9F5F2}
+/* 构建进度条: 暖红橙 */
+.ethnos-progress{background:#fff;border:1px solid var(--naxi-line);border-radius:12px}
+.ethnos-bar{background:#F6D9C2;border-radius:999px}
+.ethnos-fill{background:linear-gradient(90deg,#FF8A1E,#E8442E,#C4291F)}
+/* ---- 板块标题: 前缀纳西四角星(披星戴月意象) ---- */
+.page-title::before,.sec-title::before{content:"";display:inline-block;width:15px;height:15px;margin-right:11px;vertical-align:-2px;
+  background:var(--red-grad);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);
+  box-shadow:0 1px 4px rgba(196,41,31,.35)}
+.page-title{color:#7A2E1E}
+.sec-title b{color:#7A2E1E}
+/* 表格 / 卡片: 暖色边框 + 顶部纳西色条 */
+.song-table td{border-bottom:1px solid var(--naxi-line)}
+.song-table tr:nth-child(even) td{background:#FFF3E4}
+.song-table tr.playing td,.batch-mode tbody tr.on{background:#FCE3D2}
+.song-table tr.playing td:first-child{box-shadow:inset 3px 0 0 #E8442E}
 .td-name .t.now{color:var(--red)}
-.chart-card{background:#FFFDF8;border-color:var(--bst-rim)}
-.chart-card:hover{border-color:#C9DCD5}
-.chart-item{border-bottom:1px solid #F0F2EA}
-.chip{background:#F3F1E7}
-.chip:hover{background:#EAE5D6}
-.chip.on{background:#E6F4F1;border-color:#A9DBD3}
-.td-act button:hover{background:#E6F4F1}
-.eth-row:hover,.eth-artist:hover,.dw-row:hover,.ms-row:hover,#as-list .p:hover,#search-hist .h-row:hover{background:#F2F5EE}
-.eth-row.on{background:#E9F5F2}
-.eth-row.is-pinned,.pltable tr.is-pinned td{background:#FDF8EC}
-.filter-input{background:#F3F1E7;color:var(--txt)}
-.src-checks label{background:#F4F2E8}
-.src-checks label.on{background:#E9F5F2;border-color:#A9DBD3}
-.src-pill{background:#F4F2E8}
-.as-newrow{background:#FBF9F2;border-color:#DCD6C4}
-/* 头像 / 封面底色: 青碧系 */
-.eth-artist .av,.eth-row .av{background:linear-gradient(135deg,#A6D8D0,#3E8B82)}
-.art-card .av{background:linear-gradient(135deg,#AFDFD6,#2E8F86);box-shadow:0 6px 18px rgba(46,143,134,.28)}
-.alb-card .cov{background:linear-gradient(135deg,#A2D2CB,#5FA79C)}
-/* ---- 播放页: 整片梯田 ---- */
+.pl-card,.chart-card,.alb-card,.art-card{position:relative;border-radius:14px}
+.pl-card::before,.chart-card::before,.alb-card::before,.art-card::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;z-index:3;
+  background:linear-gradient(90deg,#E8442E,#FF8A1E,#F6B31E)}
+.chart-card{background:#fff;border:1px solid var(--naxi-line);border-radius:14px}
+.chart-card:hover{border-color:#F2B8A4;box-shadow:0 8px 22px rgba(196,41,31,.14)}
+.chart-item{border-bottom:1px solid var(--naxi-line)}
+.chip{background:#FCEBD8;border-color:transparent;color:#7A5238}
+.chip:hover{background:#F6D9C2}
+.chip.on{background:#FDE3D6;border-color:#F2B8A4;color:#C4291F}
+.td-act button:hover{background:#FCE3D2}
+.eth-row:hover,.eth-artist:hover,.dw-row:hover,.ms-row:hover,#as-list .p:hover,#search-hist .h-row:hover{background:#FCEBD8}
+.eth-row.on{background:#FCE3D2;box-shadow:inset 3px 0 0 #E8442E}
+.eth-row.is-pinned,.pltable tr.is-pinned td{background:#FFF3E4}
+.filter-input{background:#FCEBD8;color:var(--txt);border-color:var(--naxi-line)}
+.src-checks label{background:#FFF3E4}
+.src-checks label.on{background:#FDE3D6;border-color:#F2B8A4;color:#C4291F}
+.src-pill{background:#FCEBD8;color:#7A5238}
+.as-newrow{background:#fff;border-color:var(--naxi-line)}
+/* 头像 / 封面: 暖色渐变(红橙金) */
+.eth-artist .av,.eth-row .av{background:linear-gradient(135deg,#FF8A1E,#E8442E);box-shadow:0 6px 18px rgba(196,41,31,.28)}
+.art-card .av{background:linear-gradient(135deg,#FF8A1E,#C4291F);box-shadow:0 6px 18px rgba(196,41,31,.28)}
+.alb-card .cov{background:linear-gradient(135deg,#F6B31E,#FF8A1E)}
+/* ---- 播放页: 暖白 + 红金光晕 ---- */
 #nowplaying{
   background:
-    radial-gradient(124% 60% at 50% 118%, rgba(46,143,134,.17) 0 21%, rgba(0,0,0,0) 22%),
-    radial-gradient(92% 46% at 18% 114%, rgba(46,143,134,.12) 0 25%, rgba(0,0,0,0) 26%),
-    linear-gradient(168deg,#F4FAF8 0%,#E9F4F0 42%,#F7F3E7 100%);
+    radial-gradient(110% 52% at 50% 116%, rgba(232,68,46,.18) 0 22%, rgba(0,0,0,0) 23%),
+    radial-gradient(80% 40% at 16% 110%, rgba(246,179,30,.14) 0 26%, rgba(0,0,0,0) 27%),
+    linear-gradient(180deg,#fff 0%,#FFF7EC 60%,#FCEBD8 100%);
 }
-.lrc-line.on{color:#164F49}
-.np-btn{background:rgba(22,79,73,.07)}
-.np-btn:hover{background:rgba(22,79,73,.14)}
-/* ---- 底部播放条: 台沿 + 一汪池水 ---- */
-#playerbar{background:linear-gradient(180deg,#FCFAF4 0%,#F5F1E6 100%);border-top:1px solid var(--bst-rim)}
-.bar{background:#E5E1D2}
-.bar .fill{background:linear-gradient(90deg,#7FCFC4,#2E8F86);box-shadow:0 0 8px rgba(46,143,134,.45)}
-.bar .dot{background:#2E8F86;box-shadow:0 2px 6px rgba(22,79,73,.45)}
-.pb-btn{color:#51615D}
-.pb-prog .time{color:#8E9B96}
-#pb-cover{box-shadow:0 3px 10px rgba(22,79,73,.22);background:#EDE9DC}
-#pb-cover .ph{background:#EDE9DC;color:#9AA39C}
-/* FM 唱片: 青碧水纹 */
-.fm-disc{background:conic-gradient(from 30deg,#164F49,#2E8F86,#7FCFC4,#2E8F86,#164F49);box-shadow:0 16px 50px rgba(22,79,73,.32)}
-.fm-disc .inner{color:#2E8F86}
+.lrc-line.on{color:#C4291F;font-weight:600}
+.np-btn{background:rgba(232,68,46,.10);color:#C4291F}
+.np-btn:hover{background:rgba(232,68,46,.18)}
+/* ---- 底部播放条: 浮层玻璃卡片(复刻图底部白卡) ---- */
+#playerbar{
+  margin:0 16px 14px;
+  border-radius:14px;
+  background:rgba(255,250,242,.92);
+  backdrop-filter:blur(24px) saturate(125%);
+  -webkit-backdrop-filter:blur(24px) saturate(125%);
+  box-shadow:0 14px 40px rgba(20,10,5,.42);
+  border:none;
+}
+.bar{background:#F0D9C4;border-radius:999px}
+.bar .fill{background:linear-gradient(90deg,#FF8A1E,#E8442E);box-shadow:0 0 10px rgba(232,68,46,.45)}
+.bar .dot{background:#E8442E;box-shadow:0 2px 6px rgba(196,41,31,.40)}
+.pb-btn{color:#7A5238}
+.pb-prog .time{color:#B08968}
+#pb-cover{box-shadow:0 3px 10px rgba(20,10,5,.18);background:#FCEBD8;border-radius:10px}
+#pb-cover .ph{background:#FCEBD8;color:#B08968}
+/* FM 唱片: 暖色(朱红→红→橙→金) */
+.fm-disc{background:conic-gradient(from 30deg,#C4291F,#E8442E,#FF8A1E,#F6B31E,#FFB13B,#E8442E,#C4291F);box-shadow:0 16px 46px rgba(196,41,31,.30)}
+.fm-disc .inner{color:#C4291F}
+.fm-wrap h2{color:#7A2E1E}
 /* 弹窗 / toast */
-.overlay{background:rgba(18,42,40,.42)}
-.dlg{background:linear-gradient(180deg,#FFFDF8,#FBF8F0)}
-.dlg-close:hover{background:#F1EEE2}
-#vol-pop{background:#FFFDF8}
-.toast{background:rgba(20,52,49,.90)}
-#kbd-help .kh-card{background:linear-gradient(180deg,#FFFDF8,#FBF8F0)}
-#kbd-help kbd{background:#F4F2E8;border-color:#E2DDCB}
+.overlay{background:rgba(20,10,5,.5)}
+.dlg{background:#FFF7EC;border-radius:16px}
+.dlg-close:hover{background:#FCEBD8}
+#vol-pop{background:#FFF7EC}
+.toast{background:rgba(20,10,5,.92)}
+#kbd-help .kh-card{background:#FFF7EC}
+#kbd-help kbd{background:#FCEBD8;border-color:var(--naxi-line)}
 /* 滚动条 / 骨架屏 */
-::-webkit-scrollbar-thumb{background:#D6D2C1;border:2px solid transparent;background-clip:content-box}
-::-webkit-scrollbar-thumb:hover{background:#BEB9A4;background-clip:content-box}
-.sk{background:linear-gradient(90deg,#F3F1E7 25%,#E8E5D8 37%,#F3F1E7 63%);background-size:400% 100%}
-.empty svg{color:#2E8F86;opacity:.30}
+::-webkit-scrollbar-thumb{background:rgba(232,68,46,.5);border:2px solid transparent;background-clip:content-box;border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(196,41,31,.7);background-clip:content-box}
+.sk{background:linear-gradient(90deg,#FCEBD8 25%,#F6D9C2 37%,#FCEBD8 63%);background-size:400% 100%}
+.empty svg{color:#E8442E;opacity:.30}
 </style>
 </head>
 <body>
@@ -787,24 +845,24 @@ body{background:var(--bg)}
   <aside id="sidebar">
     <div class="logo">
       <div class="logo-icon"><svg viewBox="0 0 24 24"><use href="#i-note"/></svg></div>
-      <div><b>山河回响</b><small>纳西族音乐</small></div>
+      <div><b>纳西音韵</b><small>纳西族音乐</small></div>
     </div>
     <nav id="nav">
       <div class="nav-title">在线音乐</div>
-      <div class="nav-item nav-indexhl" data-page="index"><svg class="ic" style="color:#e0392f"><use href="#i-disc"/></svg><span class="grow" style="font-weight:600">音乐库索引</span></div>
+      <!-- 2026-10-16 全栈专家: 「音乐库索引」入口已按用户要求移除(连同索引页一起下线) -->
       <div class="nav-item nav-ethnos" data-page="ethnos"><svg class="ic" style="color:#b8860b"><use href="#i-note"/></svg><span class="grow" style="color:#b8860b;font-weight:600">民族音乐歌单</span></div>
-      <div class="nav-item" data-page="discover"><svg class="ic" style="color:#3b82f6"><use href="#i-discover"/></svg><span class="grow">发现音乐</span></div>
+      <div class="nav-item ui-hidden" data-page="discover"><svg class="ic" style="color:#3b82f6"><use href="#i-discover"/></svg><span class="grow">发现音乐</span></div>
       <div class="nav-item" data-page="fm"><svg class="ic" style="color:#8b5cf6"><use href="#i-fm"/></svg><span class="grow">私人FM</span></div>
       <div class="nav-title">我的音乐</div>
       <div class="nav-item" data-page="history"><svg class="ic" style="color:#14b8a6"><use href="#i-clock"/></svg><span class="grow">最近播放</span></div>
-      <div class="nav-item" data-page="downloads"><svg class="ic" style="color:#22c55e"><use href="#i-download"/></svg><span class="grow">下载管理</span></div>
-      <div class="nav-item" data-page="local"><svg class="ic" style="color:#f97316"><use href="#i-folder"/></svg><span class="grow">本地音乐</span></div>
+      <div class="nav-item ui-hidden" data-page="downloads"><svg class="ic" style="color:#22c55e"><use href="#i-download"/></svg><span class="grow">下载管理</span></div>
+      <div class="nav-item ui-hidden" data-page="local"><svg class="ic" style="color:#f97316"><use href="#i-folder"/></svg><span class="grow">本地音乐</span></div>
       <div class="nav-item" data-page="favorites"><svg class="ic" style="color:#ec4899"><use href="#i-heart"/></svg><span class="grow">我喜欢的音乐</span></div>
-      <div class="nav-title">我的歌单</div>
-      <div class="nav-item" id="nav-newpl"><svg class="ic" style="color:#64748b"><use href="#i-plus"/></svg><span class="grow">新建歌单...</span></div>
+      <div class="nav-title ui-hidden">我的歌单</div>
+      <div class="nav-item ui-hidden" id="nav-newpl"><svg class="ic" style="color:#64748b"><use href="#i-plus"/></svg><span class="grow">新建歌单...</span></div>
       <div id="my-playlists"></div>
-      <div class="nav-title">导入的歌单</div>
-      <div class="nav-item" id="nav-import"><svg class="ic" style="color:#0ea5e9"><use href="#i-import"/></svg><span class="grow">导入歌单...</span></div>
+      <div class="nav-title ui-hidden">导入的歌单</div>
+      <div class="nav-item ui-hidden" id="nav-import"><svg class="ic" style="color:#0ea5e9"><use href="#i-import"/></svg><span class="grow">导入歌单...</span></div>
       <div id="custom-playlists"></div>
     </nav>
     <div class="side-foot">
@@ -844,23 +902,10 @@ body{background:var(--bg)}
         <div class="pl-grid" id="pl-grid"></div>
       </div>
 
-      <!-- 民族音乐 -->
+      <!-- 民族音乐 (默认首页) -->
       <div class="page" id="page-ethnos">
-        <div class="page-title">民族音乐专区<small>纳西族歌单 · 点击卡片进入</small></div>
-        <div class="pl-grid" id="ethnos-grid"></div>
-      </div>
-
-      <!-- 最近播放 -->
-      <div class="page" id="page-history">
-        <div class="page-title">最近播放<small id="hist-sub"></small></div>
-        <div class="chips"><span style="flex:1"></span><button class="btn btn-plain btn-sm" id="hist-clear"><svg class="ic sm"><use href="#i-trash"/></svg>清空记录</button></div>
-        <table class="song-table"><thead><tr>
-          <th class="td-index"></th><th>歌曲</th><th style="width:190px">歌手</th><th style="width:190px">专辑</th><th style="width:80px">音源</th><th style="width:52px">时长</th><th style="width:130px"></th>
-        </tr></thead><tbody id="history-tbody"></tbody></table>
-      </div>
-
-      <!-- 音乐库索引 (默认首页) -->
-      <div class="page" id="page-index">
+        <!-- 2026-10-16: 原属「音乐库索引」页的白水台横幅与构建进度条随该页下线而迁到此处,
+             renderEthnos() 依赖 #ethnos-progress / #ethnos-fill / #ethnos-prog-text / #ethnos-stop, 必须保留 -->
         <div class="ethnos-hero">
           <div>
             <h2>纳西族 · 音乐地图</h2>
@@ -875,31 +920,22 @@ body{background:var(--bg)}
           <div class="ethnos-bar"><div class="ethnos-fill" id="ethnos-fill"></div></div>
           <span id="ethnos-prog-text" style="font-size:12px;color:#8a6d1a"></span>
         </div>
-        <div class="page-title">音乐库索引<small id="idx-sub"></small></div>
-        <div class="stabs" style="margin-bottom:18px">
-          <div class="stab on" data-itab="ethnos">民族</div>
-        </div>
-        <div id="itab-ethnos">
-          <div style="display:flex;gap:10px;margin-bottom:14px;align-items:center">
-            <input class="filter-input" id="eth-filter" placeholder="输入歌手名或歌曲名...">
-            <div class="chips" id="eth-mode" style="margin:0">
-              <div class="chip on" data-mode="artist">歌手</div>
-              <div class="chip" data-mode="song">歌曲</div>
-            </div>
-            <span style="font-size:11.5px;color:var(--txt3)" id="eth-filter-hint"></span>
-          </div>
-          <!-- 歌曲检索结果: 与 #idx-ethnos 并列, 放在搜索框外部, 避免被 renderIndex 重写 innerHTML 摧毁 -->
-          <div id="idx-songs" style="display:none">
-            <div id="idx-songs-summary" style="color:var(--txt3);font-size:12.5px;margin:0 0 10px"></div>
-            <table class="song-table"><thead><tr>
-              <th class="td-index"></th><th>歌曲</th><th style="width:150px">歌手</th><th style="width:150px">专辑</th><th style="width:86px">民族库</th><th style="width:76px">音源</th><th style="width:52px">时长</th><th style="width:110px"></th>
-            </tr></thead><tbody id="idx-songs-tbody"></tbody></table>
-            <div class="empty" id="idx-songs-empty" style="display:none"><svg><use href="#i-disc"/></svg><div>暂无匹配的歌曲</div></div>
-          </div>
-          <div id="idx-ethnos"></div>
-        </div>
-        <div id="itab-topics" style="display:none"><div class="pl-grid" id="idx-topics"></div></div>
+        <div class="page-title">民族音乐专区<small id="pl-count-sub">纳西族歌单 · 点击卡片进入</small></div>
+        <div class="pl-grid" id="ethnos-grid"></div>
       </div>
+
+      <!-- 最近播放 -->
+      <div class="page" id="page-history">
+        <div class="page-title">最近播放<small id="hist-sub"></small></div>
+        <div class="chips"><span style="flex:1"></span><button class="btn btn-plain btn-sm" id="hist-clear"><svg class="ic sm"><use href="#i-trash"/></svg>清空记录</button></div>
+        <table class="song-table"><thead><tr>
+          <th class="td-index"></th><th>歌曲</th><th style="width:190px">歌手</th><th style="width:190px">专辑</th><th style="width:80px">音源</th><th style="width:52px">时长</th><th style="width:130px"></th>
+        </tr></thead><tbody id="history-tbody"></tbody></table>
+      </div>
+
+      <!-- 「音乐库索引」页面已于 2026-10-16 按用户要求整个下线(含入口), 默认首页改为「民族音乐歌单」。
+           /api/index 的数据仍由 loadIndex 在后台拉取, 供封面解析 / 歌手名册等功能使用,
+           只是不再渲染成可见页面; renderIndex() 保留为空实现以防上百处调用报错。 -->
 
       <!-- 私人FM -->
       <div class="page" id="page-fm">
@@ -1420,14 +1456,17 @@ function toggleFav(t){
 }
 
 /* ================================================================ 路由 */
-let currentPage = 'index';
+let currentPage = 'ethnos';   /* 2026-10-16: 默认首页由「音乐库索引」改为「民族音乐歌单」 */
 function nav(page, params, push = true){
   const hash = '#' + page + (params ? '?' + new URLSearchParams(params).toString() : '');
   if (push && location.hash !== hash) { history.pushState({ page, params: params || {} }, '', hash); state.navDepth = (state.navDepth || 0) + 1; }
   render(page, params || {});
 }
-window.addEventListener('popstate', () => { state.navDepth = Math.max(0, (state.navDepth || 0) - 1); const m = location.hash.slice(1).split('?'); render(m[0] || 'index', Object.fromEntries(new URLSearchParams(m[1] || ''))); });
+window.addEventListener('popstate', () => { state.navDepth = Math.max(0, (state.navDepth || 0) - 1); const m = location.hash.slice(1).split('?'); render(_normPage(m[0]), Object.fromEntries(new URLSearchParams(m[1] || ''))); });
+/* 音乐库索引页已下线: 任何还指向它的深链/旧书签/旧 hash 统一落到「民族音乐歌单」页, 避免白屏 */
+function _normPage(p){ return (p === 'index' || !p) ? 'ethnos' : p; }
 function render(page, params){
+  page = _normPage(page);
   currentPage = page;
   $$('.page').forEach(p => p.classList.remove('active'));
   const el = $('#page-' + page); if (el) el.classList.add('active');
@@ -1443,7 +1482,6 @@ function render(page, params){
   if (page === 'favorites') renderFavorites();
   if (page === 'fm') renderFM();
   if (page === 'ethnos') { openEthnosZone(); }
-  if (page === 'index') { loadIndex(); loadEthnos(); }
   if (page === 'history') renderHistory();
 }
 
@@ -2623,7 +2661,13 @@ function bindEthBatch(sel, shownList){
 }
 
 function renderIndex(){
-  if (!(state.ethnos.groups || []).length) loadEthnos();   /* 深链直开索引页时补拉民族状态(徽标/发现页计数) */
+  /* 2026-10-16 全栈专家: 「音乐库索引」页面已按用户要求整个下线, 此处保留空实现。
+     不删函数名是因为全库有上百处调用(写操作后的刷新 / 歌手入库 / 合集变动...),
+     全部摘掉风险太高; 让它立刻返回即可, 调用点无需改动。
+     注: loadIndex() 仍会拉取 /api/index 数据 —— 那是封面解析与歌手名册的数据源,
+     属于数据层、和这个页面无关, 必须保留。*/
+  return;
+  if (!(state.ethnos.groups || []).length) loadEthnos();
   const d = state.index.data;
   $('#idx-sub').textContent = d ? `${(d.stats || {}).artists || 0} 位歌手 · ${(d.stats || {}).songs || 0} 首歌曲 · ${(d.stats || {}).ethnos_playlists || 1} 个民族歌单` : '';
   $$('#page-index .stab').forEach(t => {
@@ -3606,7 +3650,7 @@ $$('.nav-item[data-page]').forEach(n => n.onclick = () => nav(n.dataset.page));
   initDiscover();   /* 后台预热榜单/预置歌单, 不阻塞首屏 */
   renderMyPlaylists();
   const m = location.hash.slice(1).split('?');
-  render(m[0] || 'index', Object.fromEntries(new URLSearchParams(m[1] || '')));
+  render(_normPage(m[0]), Object.fromEntries(new URLSearchParams(m[1] || '')));   /* 索引页已下线 -> 默认落到民族音乐歌单 */
   pollTasks();
   /* UI 态服务端对齐: 换设备/清缓存后能把上次的排序、隐藏、我的歌单找回来 */
   uiStateBootstrap();
@@ -3673,7 +3717,7 @@ $$('.nav-item[data-page]').forEach(n => n.onclick = () => nav(n.dataset.page));
 
   /* ---- 6. 侧栏 logo 点击回到音乐库索引 ---- */
   const logo = document.querySelector('.logo');
-  if (logo){ logo.style.cursor = 'pointer'; logo.onclick = () => nav('index'); logo.title = '回到音乐库索引'; }
+  if (logo){ logo.style.cursor = 'pointer'; logo.onclick = () => nav('ethnos'); logo.title = '回到音乐库'; }
 })();
 </script>
 </body>
